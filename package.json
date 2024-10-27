@@ -7,12 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "push": "drizzle-kit introspect:pg",
-    "pull": "drizzle-kit generate:pg",
-    "generate": "drizzle-kit drop",
+    "push": "drizzle-kit push",
+    "pull": "drizzle-kit pull",
+    "generate": "drizzle-kit generate",
     "drop": "drizzle-kit drop",
     "check": "drizzle-kit check:pg",
-    "up": "drizzle-kit up:pg"
+    "up": "drizzle-kit up:pg",
+    "migrate": "bun run src/lib/supabase/migration.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.0",
