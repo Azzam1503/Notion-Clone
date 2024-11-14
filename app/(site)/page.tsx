@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Banner from "../../public/appBanner.png";
 import Calender from "../../public/cal.png";
-import { CLIENTS } from "@/lib/constants";
+import { CLIENTS, USERS } from "@/lib/constants";
+import { randomUUID } from "crypto";
+import { twMerge } from "tailwind-merge";
+import clsx from "clsx";
+import CustomCard from "@/components/landing-page/customCard";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CardDescription, CardTitle } from "@/components/ui/card";
 
 const HomePage = () => {
   return (
@@ -86,15 +92,75 @@ const HomePage = () => {
         </div>
       </section>
       <section className="px-4 sm:px-6 flex justify-center items-center flex-col relative">
-        <div className="w-[30%] blur-[120px] rounded-full absolute bg-brand-primaryPurple/50 -z-10 top-22" />
+        <div className="w-[30%] blur-[120px] rounded-full h-32 absolute bg-brand-primaryPurple/50 -z-10 top-22" />
         <TitleSection
           title="Keep track of your meetings all in one place"
           subheading="Caputre your ideas, thoughts, and meeting notes in a strong way"
           pill="Features"
         />
-        <div className="mt-10 max-w-[450px] flex justify-center relative sm:ml-0 rounded-2xl border-8 border-opacity-10">
+        <div className="mt-10 max-w-[450px] flex justify-center relative sm:ml-0 rounded-2xl border-8 border-washed-purple-300  border-opacity-10">
           <Image src={Calender} alt="Banner" className="rounded-2xl" />
         </div>
+      </section>
+      <section className="relative">
+        <div className="w-full blur-[120px] rounded-full h-32 absolute bg-brand-primaryPurple/50 -z-100 top-56" />
+        <div className="mt-20 px-4 sm:px-6 flex flex-col overflow-x-hidden overflow-visible">
+          <TitleSection
+            title="Trusted by all"
+            pill="Testimonials"
+            subheading="Join thousands of satisfied users who rely on our platform for their 
+            personal and professional productivity needs."
+          />
+          {[...Array(2)].map((arr, ind) => (
+            <div
+              key={randomUUID()}
+              className={twMerge(
+                clsx("mt-10 flex flex-nowrap gap-6 self-start", {
+                  "flex-row-reverse": ind === 1,
+                  "animate-[slide_250s_linear_infinite]": true,
+                  "animate-[slide_250s_linear_infinite_reverse]": ind === 1,
+                  "ml-[100vw]": ind === 1,
+                }),
+                "hover:paused"
+              )}
+            >
+              {USERS.map((user, ind) => (
+                <CustomCard
+                  key={user.name}
+                  className="w-[500px] shrink-0 rounded-xl dark:bg-gradient-to-t dark:from-border dark:to-background"
+                  cardHeader={
+                    <div className="flex items-center gap-4">
+                      <Avatar>
+                        <AvatarImage src={`/avatars/${ind + 1}.png`} />
+                        <AvatarFallback>AV</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <CardTitle className="text-foreground">
+                          {user.name}
+                        </CardTitle>
+                        <CardDescription className="dark:text-washed-purple-800">
+                          {user.name.toLowerCase()}
+                        </CardDescription>
+                      </div>
+                    </div>
+                  }
+                  cardContent={
+                    <p className="dark:text-washed-purple-800">
+                      {user.message}
+                    </p>
+                  }
+                ></CustomCard>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="mt-20 px-4 sm:px-6">
+        <TitleSection
+          title="The Perfect Plan For You"
+          subheading="Experience all the benefits of our platform. Select a plan that suits your needs and take your productivity to new heights."
+          pill="Pricing"
+        />
       </section>
     </>
   );
