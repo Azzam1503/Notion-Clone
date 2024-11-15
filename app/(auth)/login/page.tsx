@@ -6,10 +6,20 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSchema } from "@/lib/type";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "../../../public/cypresslogo.svg";
+import { Button } from "@/components/ui/button";
+import Loader from "@/components/Loader";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -40,6 +50,54 @@ const LoginPage = () => {
             Login
           </span>
         </Link>
+        <FormDescription className="text-foreground/60">
+          An All-In-One Collabration and Productivity Platform
+        </FormDescription>
+        <FormField
+          disabled={isLoading}
+          control={form.control}
+          name="email"
+          render={(field) => (
+            <FormItem>
+              <FormControl>
+                <Input type="email" placeholder="email" {...field}></Input>
+              </FormControl>
+              <FormMessage></FormMessage>
+            </FormItem>
+          )}
+        ></FormField>
+        <FormField
+          disabled={isLoading}
+          control={form.control}
+          name="password"
+          render={(field) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="password"
+                  {...field}
+                ></Input>
+              </FormControl>
+              <FormMessage></FormMessage>
+            </FormItem>
+          )}
+        ></FormField>
+        {submitError && <FormMessage>{submitError}</FormMessage>}
+        <Button
+          type="submit"
+          className="w-full p-6"
+          size={"lg"}
+          disabled={isLoading}
+        >
+          {isLoading ? <Loader /> : "Login"}
+        </Button>
+        <span className="self-center">
+          Don't have an account?
+          <Link href="/signup" className="text-primary p-2">
+            Singup
+          </Link>
+        </span>
       </form>
     </Form>
   );
