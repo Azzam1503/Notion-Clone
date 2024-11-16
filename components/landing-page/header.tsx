@@ -117,18 +117,16 @@ const header = ({}) => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href={"#"}>
-              <NavigationMenuLink
-                className={cn(navigationMenuTriggerStyle(), {
-                  "dark:text-white": path === "#testimonials",
-                  "dark:text-white/40": path !== "#testimonials",
-                  "font-normal": true,
-                  "text-xl": true,
-                })}
-              >
-                Testimonials
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              className={cn(navigationMenuTriggerStyle(), {
+                "dark:text-white": path === "#testimonials",
+                "dark:text-white/40": path !== "#testimonials",
+                "font-normal": true,
+                "text-xl": true,
+              })}
+            >
+              Testimonials
+            </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
@@ -136,6 +134,11 @@ const header = ({}) => {
         <Link href={"/login"}>
           <Button variant={"secondary"} className="p-1 hidden sm:block">
             Login
+          </Button>
+        </Link>
+        <Link href={"/signup"}>
+          <Button className="whitespace-nowrap p-1 hidden sm:block">
+            Signup
           </Button>
         </Link>
       </aside>
