@@ -23,6 +23,8 @@ import Logo from "@/public/cypresslogo.svg";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MailCheck } from "lucide-react";
 import { FormSchema } from "@/lib/type";
+import { Control } from "react-hook-form";
+import { actionSingupUser } from "@/lib/server-actions/auth-action";
 
 const SingupFormSchema = z
   .object({
@@ -45,7 +47,6 @@ const Signup = () => {
   const searchParams = useSearchParams();
   const [submitError, setSubmitError] = useState("");
   const [confirmation, setConfirmation] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const codeExchangeError = useMemo(() => {
     if (!searchParams) return "";
@@ -62,18 +63,26 @@ const Signup = () => {
     [codeExchangeError]
   );
 
-  const form = useForm<z.infer<typeof SingupFormSchema>>({
+  type SignupValues = z.infer<typeof SingupFormSchema>;
+
+  const form = useForm<SignupValues>({
     mode: "onChange",
     resolver: zodResolver(SingupFormSchema),
     defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
-  const onSubmit = async ({
-    email,
-    password,
-  }: z.infer<typeof FormSchema>) => {};
+  const isLoading = form.formState.isSubmitting;
+  const onSubmit = async ({ email, password }: z.infer<typeof FormSchema>) => {
+    const { error } = await actionSingupUser({ email, password });
 
-  const signupHandler = () => {};
+    if (error) {
+      setSubmitError(error.message);
+      form.reset();
+      return;
+    }
+
+    setConfirmation(true);
+  };
 
   return (
     <Form {...form}>
@@ -82,7 +91,7 @@ const Signup = () => {
           if (submitError) setSubmitError("");
         }}
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full sm:justify-center sm-w-[400px] space-y-6 flex flex-col"
+        className="w-full sm:justify-center sm:w-[400px] space-y-6 flex flex-col"
       >
         <Link href="" className="w-full flex justify-left items-center">
           <Image src={Logo} alt="Logo" width={50} height={50} />
@@ -93,56 +102,57 @@ const Signup = () => {
         <FormDescription className="text-foreground/60">
           An All-In-One Collabration and Productivity Platform
         </FormDescription>
-        <FormField
-          disabled={isLoading}
-          control={form.control}
-          name="email"
-          render={(field) => (
-            <FormItem>
-              <FormControl>
-                <Input type="email" placeholder="email" {...field}></Input>
-              </FormControl>
-              <FormMessage></FormMessage>
-            </FormItem>
-          )}
-        ></FormField>
-        <FormField
-          disabled={isLoading}
-          control={form.control}
-          name="password"
-          render={(field) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="password"
-                  {...field}
-                ></Input>
-              </FormControl>
-              <FormMessage></FormMessage>
-            </FormItem>
-          )}
-        ></FormField>
-        <FormField
-          disabled={isLoading}
-          control={form.control}
-          name="confirmPassword"
-          render={(field) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="confirm password"
-                  {...field}
-                ></Input>
-              </FormControl>
-              <FormMessage></FormMessage>
-            </FormItem>
-          )}
-        ></FormField>
-        {submitError && <FormMessage>{submitError}</FormMessage>}
         {!confirmation && !codeExchangeError && (
           <>
+            <FormField
+              disabled={isLoading}
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input type="email" placeholder="email" {...field}></Input>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            ></FormField>
+            <FormField
+              disabled={isLoading}
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="password"
+                      {...field}
+                    ></Input>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            ></FormField>
+            <FormField
+              disabled={isLoading}
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="confirm password"
+                      {...field}
+                    ></Input>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            ></FormField>
+            {submitError && <FormMessage>{submitError}</FormMessage>}
+
             <Button
               type="submit"
               className="w-full p-6"
@@ -160,20 +170,19 @@ const Signup = () => {
             Login
           </Link>
         </span>
-        {confirmation ||
-          (codeExchangeError && (
-            <>
-              <Alert className={confirmationAndErrorStyles}>
-                {!codeExchangeError && <MailCheck className="h-4 w-4" />}
-                <AlertTitle>
-                  {codeExchangeError ? "Invalid Link" : "Check your email"}
-                </AlertTitle>
-                <AlertDescription>
-                  {codeExchangeError || "An email confirmation has been sent."}
-                </AlertDescription>
-              </Alert>
-            </>
-          ))}
+        {(confirmation || codeExchangeError) && (
+          <>
+            <Alert className={confirmationAndErrorStyles}>
+              {!codeExchangeError && <MailCheck className="h-4 w-4" />}
+              <AlertTitle>
+                {codeExchangeError ? "Invalid Link" : "Check your email"}
+              </AlertTitle>
+              <AlertDescription>
+                {codeExchangeError || "An email confirmation has been sent."}
+              </AlertDescription>
+            </Alert>
+          </>
+        )}
       </form>
     </Form>
   );
