@@ -24,7 +24,7 @@ export async function  actionSingupUser({email, password}: User){
     if(data?.length) return {error: {message: "User already exist"}};
 
     const response = await supabase.auth.signUp({email, password, options:{
-        emailRedirectTo: `${process.env.NEXT_SITE_URL}api/auth/callback`
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}api/auth/callback`
     }});
     console.log("response-----------" + JSON.stringify(response))
     return {success: true};
